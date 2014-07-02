@@ -1,0 +1,7 @@
+- content_for(:title, 'Update Transaction')
+
+.container
+	.row
+		.col-md-12
+		= form_for @transaction, url: "/transactions/#{@transaction.id}" do |f|
+			= render "form", f: f

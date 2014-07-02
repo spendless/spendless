@@ -1,0 +1,79 @@
+- content_for(:title, 'Your Dashboard')
+
+.container
+
+	.col-md-3
+		.budget-box-heading Total Account Balance:
+	.col-md-3
+		.budget-box-heading Budget Remaining:
+	.col-md-6
+	.col-md-2
+		= date_field "search[begin_date]", :class => "label control-label inline"
+	.col-md-2
+		= date_field "search[end_date]", :class => "label control-label inline"
+	.col-md-2
+		= submit_tag "Search", :class => "button btn btn-budget btn-lg btn-block"
+
+.container
+	%legend Transactions for current month
+	
+	%ul.nav.nav-tabs{style: "margin-bottom: 15px;"}
+		%li.active
+			%a{"data-toggle" => "tab", href: "#all"} Show all
+		%li
+			%a{"data-toggle" => "tab", href: "#expense"} Expenses
+		%li
+			%a{"data-toggle" => "tab", href: "#income"} Income
+	#myTabContent.tab-content
+		#all.tab-pane.fade.active.in
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- Transaction.all.each do |t|
+					-if t.transaction_date.strftime("%Y-%m") == Date.today.strftime("%Y-%m")
+						- if t.transaction_type == 'income'
+							%tr.btn-success
+								=render 'tcells', :t => t
+						- else
+							%tr.danger
+								=render 'tcells', t: t
+		#expense.tab-pane.fade
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- Transaction.all.each do |t|
+					- if t.transaction_type == 'expense' && t.transaction_date.strftime("%Y-%m") == Date.today.strftime("%Y-%m")
+						%tr.danger
+							=render 'tcells', t: t
+					- else
+						%tr
+		#income.tab-pane.fade
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- Transaction.all.each do |t|
+					- if t.transaction_type == 'income' && t.transaction_date.strftime("%Y-%m") == Date.today.strftime("%Y-%m")
+						%tr.success
+							=render 'tcells', t: t
+					- else
+						%tr
+
+	= link_to "Add Transaction", new_transaction_path, :class => "btn btn-success"
