@@ -1,0 +1,103 @@
+- content_for(:title, 'Your Transactions')
+
+.container
+	%legend Transactions
+	
+	%ul.nav.nav-tabs{style: "margin-bottom: 15px;"}
+		%li.active
+			%a{"data-toggle" => "tab", href: "#all"} Show all
+		%li
+			%a{"data-toggle" => "tab", href: "#expense"} Expenses
+		%li
+			%a{"data-toggle" => "tab", href: "#income"} Income
+	#myTabContent.tab-content
+		#all.tab-pane.fade.active.in
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- @transactions.each do |t|
+					- if t.transaction_type == 'income'
+						%tr.btn-success
+							=render 'tcells', :t => t
+					- else
+						%tr.danger
+							=render 'tcells', t: t
+		#expense.tab-pane.fade
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- @transactions.each do |t|
+					- if t.transaction_type == 'expense'
+						%tr.danger
+							=render 'tcells', t: t
+					- else
+						%tr
+		#income.tab-pane.fade
+			%table.table.table-hover
+				.thead
+					%tr
+						%th= "Amount"
+						%th= "Transaction with"
+						%th= "Category"
+						%th= "Transaction date"
+
+				.tbody
+				- @transactions.each do |t|
+					- if t.transaction_type == 'income'
+						%tr.success
+							=render 'tcells', t: t
+					- else
+						%tr
+
+	= link_to "Add Transaction", new_transaction_path, :class => "btn btn-success"
+
+
+
+
+
+
+
+
+
+.container
+	.row
+		.col-md-12
+			%border-bottom
+			%br
+			
+			= form_tag search_transactions_path, method: :get do
+				Search by:
+				%br
+
+				Transaction type:
+				= select_tag "search[trans_type]", options_for_select(["Income", "Expenses"]), include_blank: true
+			
+				Transaction Category:
+				= select("search", "cat", categories.each.collect {|c| [c, c]}, { include_blank: true })
+
+				Transaction business:
+				= select_tag "search[name]", options_from_collection_for_select(Transaction.all, 'name', 'name'), include_blank: true
+
+				%br
+				
+				Search by date range:
+				= label_tag "Begin date"
+				= date_field_tag "search[begin_date]"
+				= label_tag "End date"
+				= date_field_tag "search[end_date]"
+
+				= submit_tag "Search"
+				%br
+				%br

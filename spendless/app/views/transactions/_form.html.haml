@@ -1,0 +1,36 @@
+= form_for @transaction do |f|
+  .form-horizontal
+    .fieldset
+      .form-group
+        .col-lg-6
+          .form-group
+            = f.label "Account", :class => "col-lg-2 control-label"
+            .col-lg-10
+              = f.select :account_id, Account.all.collect {|a| [(a.bank + " " + a.account_type), a.id]}, :class => "form-control" 
+          .form-group
+            = f.label "Transaction with:", :class => "col-lg-2 control-label"
+            .col-lg-10
+              = f.text_field :name, :class => "form-control"
+          .form-group
+            = f.label "Amount", :class => "col-lg-2 control-label"
+            .input-group
+              .input-group-addon $
+              = f.text_field :amount, :class => "form-control"
+          .form-group
+            = f.label :transaction_date, :class => "col-lg-2 control-label"
+            .col-lg-10
+              = f.date_select :transaction_date, :start_year => Time.now.year, :end_year => 1927, :class => "form-control"
+          .form-group
+            = f.label :category, :class => "col-lg-2 control-label"
+            .col-lg-10
+              = f.select :category, categories.each.collect {|c| [c, c]}, :class => "form-control"
+          .form-group
+            = f.label "Transaction type:", :class => "col-lg-2 control-label"
+            .col-lg-10
+              = f.select :transaction_type, options_for_select([["Income", "income"], ["Expense", "expense"]]), :class => "form-control"
+
+          .actions
+            .form-group
+              .col-lg-10.col-lg-offset-2
+                = f.submit 'Save', :class => "btn btn-primary"
+                = link_to 'Cancel', transactions_path, :class => "btn btn-default"
